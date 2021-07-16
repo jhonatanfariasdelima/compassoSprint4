@@ -56,8 +56,11 @@ public class PessoaController {
             return ResponseEntity.notFound().build();
         }else {
             pessoaRepository.deleteById(id);
-            return ResponseEntity.ok().build();
+            if (pessoaRepository.findById(id).isPresent()){
+                return ResponseEntity.badRequest().build();
+            }
         }
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{id}")
