@@ -1,6 +1,9 @@
 Banco de dados: mariaDB - porta 3307
 
 
+* Documentação: http://localhost:8080/swagger-ui.html#/
+
+
 * Autenticação : 
   POST - http://localhost:8080/auth 
          {email: {email@email}, senha: {****}}
