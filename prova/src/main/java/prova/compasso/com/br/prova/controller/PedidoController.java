@@ -1,27 +1,20 @@
 package prova.compasso.com.br.prova.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import prova.compasso.com.br.prova.dto.PedidoDto;
-import prova.compasso.com.br.prova.dto.PessoaDto;
-import prova.compasso.com.br.prova.dto.ProdutoDto;
 import prova.compasso.com.br.prova.form.atualizacao.PedidoFormAtualizacao;
 import prova.compasso.com.br.prova.form.criacao.PedidoForm;
-import prova.compasso.com.br.prova.form.criacao.PessoaForm;
-import prova.compasso.com.br.prova.model.Endereco;
 import prova.compasso.com.br.prova.model.Pedido;
-import prova.compasso.com.br.prova.model.Pessoa;
 import prova.compasso.com.br.prova.repository.PedidoRepository;
 import prova.compasso.com.br.prova.repository.ProdutoRepository;
 
-import javax.transaction.RollbackException;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -36,23 +29,45 @@ public class PedidoController {
     @Autowired
     private ProdutoRepository produtoRepository;
 
-    @GetMapping
+    @GetMapping("/all")
     @ResponseBody
-    public ResponseEntity<List<PedidoDto>> listProdutos(){
+    public ResponseEntity<List<PedidoDto>> listaTodosPedidos() {
         List<Pedido> pedidos = pedidoRepository.findAll();
-        if (pedidos.isEmpty()){
+        if (pedidos.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         List<PedidoDto> pedidosListDto = PedidoDto.getPedidosDto(pedidos, produtoRepository);
         return ResponseEntity.ok().body(pedidosListDto);
     }
 
+    @GetMapping("/ativos")
+    @ResponseBody
+    public ResponseEntity<List<PedidoDto>> listaPedidosAtivos() {
+        List<Pedido> pedidos = pedidoRepository.findAll();
+        if (pedidos.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        List<PedidoDto> pedidosListDto = PedidoDto.filtroPedidosAtivos(pedidos, produtoRepository);
+        return ResponseEntity.ok().body(pedidosListDto);
+    }
+
+    @GetMapping("/inativos")
+    @ResponseBody
+    public ResponseEntity<List<PedidoDto>> ListaPedidosInativos() {
+        List<Pedido> pedidos = pedidoRepository.findAll();
+        if (pedidos.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        List<PedidoDto> pedidosListDto = PedidoDto.filtroPedidosInativos(pedidos, produtoRepository);
+        return ResponseEntity.ok().body(pedidosListDto);
+    }
+
     @GetMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<List<PedidoDto>> listProdutos(@PathVariable("id") Long id){
+    public ResponseEntity<List<PedidoDto>> listaPedidoEspecifico(@PathVariable("id") Long id) {
         Optional<Pedido> pedidos = pedidoRepository.findById(id);
         List<Pedido> p = pedidos.stream().toList();
-        if (pedidos.isEmpty()){
+        if (pedidos.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         List<PedidoDto> pedidosListDto = PedidoDto.getPedidosDto(p, produtoRepository);
@@ -61,26 +76,25 @@ public class PedidoController {
 
     @DeleteMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<List<PedidoDto>> deletPedido(@PathVariable("id") Long id){
+    @Transactional
+    public ResponseEntity<List<PedidoDto>> inativaPedido(@PathVariable("id") Long id) {
         Optional<Pedido> pedido = pedidoRepository.findById(id);
-        if (pedido.isEmpty()){
+        if (pedido.isEmpty()) {
             return ResponseEntity.notFound().build();
-        }else {
-            pedidoRepository.deleteById(id);
-            if (pedidoRepository.findById(id).isPresent()){
-                return ResponseEntity.badRequest().build();
-            }
+        } else {
+            pedido.get().setStatus(Boolean.FALSE);
+            return ResponseEntity.ok().build();
         }
-        return ResponseEntity.ok().build();
     }
 
     @PostMapping
     @ResponseBody
     @Transactional
-    public ResponseEntity<?> adicionarPessoa(@RequestBody PedidoForm pedidoForm, UriComponentsBuilder uriComponentsBuilder){
+    public ResponseEntity<?> adicionaPedido(@RequestBody @Valid PedidoForm pedidoForm, UriComponentsBuilder uriComponentsBuilder) {
         Pedido newPedido = pedidoForm.convert();
+        newPedido.setStatus(Boolean.TRUE);
         pedidoRepository.save(newPedido);
-        if (pedidoRepository.findById(newPedido.getId()).isEmpty()){
+        if (pedidoRepository.findById(newPedido.getId()).isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
         URI uri = uriComponentsBuilder.path("/{id}").buildAndExpand(newPedido.getId()).toUri();
@@ -89,9 +103,8 @@ public class PedidoController {
 
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<?> adicionarPessoa(@PathVariable("id") Long id, @RequestBody PedidoFormAtualizacao formAtualizacao){
+    public ResponseEntity<?> atualizaPedido(@PathVariable("id") Long id, @RequestBody @Valid PedidoFormAtualizacao formAtualizacao) {
         Pedido pedidoAtualizado = formAtualizacao.atualizar(id, pedidoRepository);
-
         return ResponseEntity.ok().build();
     }
 }

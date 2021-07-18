@@ -14,21 +14,49 @@ public class PedidoDto {
     private BigDecimal total = BigDecimal.ZERO;
     private String dataDoPedido;
     private List<ProdutoDto> produtos = new ArrayList<>();
+    private Boolean status;
 
-    public PedidoDto(){}
+    public PedidoDto() {
+    }
 
     public static List<PedidoDto> getPedidosDto(List<Pedido> pedidos, ProdutoRepository produtoRepository) {
         List<PedidoDto> pedidosListDto = new ArrayList<>();
 
         int i;
-        for (i=0; i<pedidos.size(); i++){  // para cada pedido na lista de pedidos
+        for (i = 0; i < pedidos.size(); i++) {  // para cada pedido na lista de pedidos
+
             PedidoDto pedidoDto = new PedidoDto();
             pedidoDto.constructPedidos(pedidos.get(i), produtoRepository);
             pedidoDto.setId(pedidos.get(i).getId());
+            pedidoDto.setStatus(pedidos.get(i).getStatus());
             pedidosListDto.add(pedidoDto);
         }
 
         return pedidosListDto;
+    }
+
+    public static List<PedidoDto> filtroPedidosAtivos(List<Pedido> pedidos, ProdutoRepository produtoRepository) {
+        int i;
+        for (i = 0; i < pedidos.size(); i++) {  // para cada pedido na lista de pedidos
+            if (pedidos.get(i).getStatus() == Boolean.FALSE) {
+                pedidos.remove(i);
+                break;
+            }
+        }
+        List<PedidoDto> p = getPedidosDto(pedidos, produtoRepository);
+        return p;
+    }
+
+    public static List<PedidoDto> filtroPedidosInativos(List<Pedido> pedidos, ProdutoRepository produtoRepository) {
+        int i;
+        for (i = 0; i < pedidos.size(); i++) {  // para cada pedido na lista de pedidos
+            if (pedidos.get(i).getStatus() == Boolean.TRUE) {
+                pedidos.remove(i);
+                break;
+            }
+        }
+        List<PedidoDto> p = getPedidosDto(pedidos, produtoRepository);
+        return p;
     }
 
     public void constructPedidos(Pedido p, ProdutoRepository produtoRepository) {
@@ -37,7 +65,7 @@ public class PedidoDto {
         this.dataDoPedido = p.getData();
 
         int j;
-        for (j=0;j<listaDeProdutos.size();j++){  // para cada produto
+        for (j = 0; j < listaDeProdutos.size(); j++) {  // para cada produto
             Optional<Produto> produto = produtoRepository.findById(Long.valueOf(listaDeProdutos.get(j)));  // produto
             this.produtos.add(new ProdutoDto(produto));  //Dto
             this.total = total.add(produto.get().getPrecoUnitario());
@@ -80,5 +108,13 @@ public class PedidoDto {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(Boolean status) {
+        this.status = status;
     }
 }

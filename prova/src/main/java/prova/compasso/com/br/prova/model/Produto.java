@@ -15,7 +15,8 @@ public class Produto {
     private String descricao;
     private BigDecimal precoUnitario;
 
-    public Produto(){}
+    public Produto() {
+    }
 
     public Produto(String descricao, BigDecimal precoUnitario) {
         this.descricao = descricao;

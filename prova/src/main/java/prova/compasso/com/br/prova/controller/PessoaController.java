@@ -12,7 +12,9 @@ import prova.compasso.com.br.prova.model.Endereco;
 import prova.compasso.com.br.prova.model.Pessoa;
 import prova.compasso.com.br.prova.repository.EnderecoRepository;
 import prova.compasso.com.br.prova.repository.PessoaRepository;
+
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
@@ -30,9 +32,9 @@ public class PessoaController {
 
     @GetMapping()
     @ResponseBody
-    public ResponseEntity<List<PessoaDto>> listPessoas(){
+    public ResponseEntity<List<PessoaDto>> listaPessoas() {
         List<Pessoa> pessoas = pessoaRepository.findAll();
-        if (pessoas.isEmpty()){
+        if (pessoas.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().body(PessoaDto.convert(pessoas));
@@ -40,9 +42,9 @@ public class PessoaController {
 
     @GetMapping("{id}")
     @ResponseBody
-    public ResponseEntity<List<PessoaDto>> listPessoaPeloID(@PathVariable("id") Long id){
+    public ResponseEntity<List<PessoaDto>> listPessoaEspecifica(@PathVariable("id") Long id) {
         Optional<Pessoa> pessoas = pessoaRepository.findById(id);
-        if (pessoas.isEmpty()){
+        if (pessoas.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().body(PessoaDto.convert(pessoas));
@@ -50,13 +52,13 @@ public class PessoaController {
 
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity<List<PessoaDto>> deletaPessoaPeloID(@PathVariable("id") Long id){
+    public ResponseEntity<List<PessoaDto>> deletaPessoa(@PathVariable("id") Long id) {
         Optional<Pessoa> pessoas = pessoaRepository.findById(id);
-        if (pessoas.isEmpty()){
+        if (pessoas.isEmpty()) {
             return ResponseEntity.notFound().build();
-        }else {
+        } else {
             pessoaRepository.deleteById(id);
-            if (pessoaRepository.findById(id).isPresent()){
+            if (pessoaRepository.findById(id).isPresent()) {
                 return ResponseEntity.badRequest().build();
             }
         }
@@ -65,29 +67,23 @@ public class PessoaController {
 
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<PessoaDto> atualizar(@PathVariable("id") Long id, @RequestBody AtualizacaoPessoaForm form){
+    public ResponseEntity<PessoaDto> atualizaPessoa(@PathVariable("id") Long id, @RequestBody AtualizacaoPessoaForm form) {
         Pessoa pessoaAtualizada = form.atualizar(id, pessoaRepository);
-
         return ResponseEntity.ok(new PessoaDto(pessoaAtualizada));
     }
 
     @PostMapping
     @ResponseBody
     @Transactional
-    public ResponseEntity<PessoaDto> adicionarPessoa(@RequestBody PessoaForm pessoaForm, UriComponentsBuilder uriComponentsBuilder){
+    public ResponseEntity<PessoaDto> adicionaPessoa(@RequestBody @Valid PessoaForm pessoaForm, UriComponentsBuilder uriComponentsBuilder) {
         Pessoa newPessoa = pessoaForm.convert();
         pessoaRepository.save(newPessoa);
-
         Endereco enderecoNovaPessoa = pessoaForm.getEndereco();
         enderecoNovaPessoa.setPessoa(newPessoa);
         enderecoRepository.save(enderecoNovaPessoa);
-
         newPessoa.setEndereco(Collections.singletonList(enderecoNovaPessoa));
-
-
         URI uri = uriComponentsBuilder.path("/{id}").buildAndExpand(newPessoa.getId()).toUri();
         return ResponseEntity.created(uri).body(new PessoaDto(newPessoa));
-
     }
 
 }

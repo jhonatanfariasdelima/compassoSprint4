@@ -1,13 +1,18 @@
 package prova.compasso.com.br.prova.form.criacao;
 
 import prova.compasso.com.br.prova.model.Endereco;
-
+import javax.validation.constraints.NotBlank;
 
 public class EnderecoForm {
+    @NotBlank
     private String pais;
+    @NotBlank
     private String estado;
+    @NotBlank
     private String cidade;
+    @NotBlank
     private String cep;
+    @NotBlank
     private String rua;
 
     public Endereco convert() {

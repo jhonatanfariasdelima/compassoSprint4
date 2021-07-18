@@ -5,7 +5,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-
 @Entity
 public class Pedido {
 
@@ -14,6 +13,7 @@ public class Pedido {
     private Long id;
     private String listaDePedidos;
     private String data;
+    private Boolean status;
 
     public Long getId() {
         return id;
@@ -37,5 +37,13 @@ public class Pedido {
 
     public void setData(String data) {
         this.data = data;
+    }
+
+    public Boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(Boolean status) {
+        this.status = status;
     }
 }

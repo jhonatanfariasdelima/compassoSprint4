@@ -1,9 +1,6 @@
 package prova.compasso.com.br.prova.model;
 
-import prova.compasso.com.br.prova.form.criacao.EnderecoForm;
-
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 public class Endereco {

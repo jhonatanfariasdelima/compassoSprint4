@@ -1,11 +1,7 @@
 package prova.compasso.com.br.prova.dto;
 
 import prova.compasso.com.br.prova.model.Endereco;
-import prova.compasso.com.br.prova.model.Pessoa;
 import prova.compasso.com.br.prova.repository.PessoaRepository;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class EnderecoDto {
 
@@ -18,7 +14,7 @@ public class EnderecoDto {
         return cidade;
     }
 
-    public EnderecoDto(Endereco endereco){
+    public EnderecoDto(Endereco endereco) {
         this.cidade = endereco.getCidade();
         this.rua = endereco.getRua();
     }

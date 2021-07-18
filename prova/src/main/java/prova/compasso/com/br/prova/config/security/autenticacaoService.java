@@ -7,7 +7,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import prova.compasso.com.br.prova.model.Usuario;
 import prova.compasso.com.br.prova.repository.UsuarioRepository;
-
 import java.util.Optional;
 
 @Service
@@ -19,7 +18,6 @@ public class autenticacaoService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         Optional<Usuario> usuario = usuarioRepository.findByEmail(s);
-
         if (usuario.isPresent()){
             return usuario.get();
         }

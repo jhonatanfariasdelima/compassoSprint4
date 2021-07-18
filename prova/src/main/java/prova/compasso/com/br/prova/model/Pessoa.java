@@ -7,7 +7,8 @@ import java.util.List;
 @Entity
 public class Pessoa {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
     private String cpf;
@@ -17,10 +18,10 @@ public class Pessoa {
     @OneToMany(mappedBy = "pessoa", cascade = CascadeType.REMOVE)
     private List<Endereco> endereco;
 
+    public Pessoa() {
+    }
 
-    public Pessoa(){}
-
-    public Pessoa(String nome, String cpf, BigDecimal salario, String sexo){
+    public Pessoa(String nome, String cpf, BigDecimal salario, String sexo) {
         this.cpf = cpf;
         this.nome = nome;
         this.salario = salario;

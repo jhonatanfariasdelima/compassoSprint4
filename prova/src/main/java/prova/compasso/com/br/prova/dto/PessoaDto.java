@@ -1,6 +1,7 @@
 package prova.compasso.com.br.prova.dto;
 
 import prova.compasso.com.br.prova.model.Pessoa;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -12,7 +13,7 @@ public class PessoaDto {
     private List<EnderecoDto> enderecoDto;
 
 
-    public PessoaDto(Pessoa pessoa){
+    public PessoaDto(Pessoa pessoa) {
         this.nome = pessoa.getNome();
         this.cpf = pessoa.getCpf();
         this.enderecoDto = pessoa.getEndereco().stream().map(EnderecoDto::new).collect(Collectors.toList());

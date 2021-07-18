@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import prova.compasso.com.br.prova.model.Usuario;
-
 import java.util.Date;
 
 @Service

@@ -1,13 +1,13 @@
 package prova.compasso.com.br.prova.form.criacao;
 
-import prova.compasso.com.br.prova.model.Pessoa;
 import prova.compasso.com.br.prova.model.Produto;
-
+import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 
 public class ProdutoForm {
-
+    @NotBlank
     private String descricao;
+    @NotBlank
     private BigDecimal precoUnitario;
 
 
