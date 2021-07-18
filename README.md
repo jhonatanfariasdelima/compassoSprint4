@@ -3,7 +3,7 @@ Banco de dados: mariaDB - porta 3307
 
 * Autenticação : 
   POST - http://localhost:8080/auth 
-         {email: {email}, senha: {****}}
+         {email: {email@email}, senha: {****}}
        
 
 * Pedido :
